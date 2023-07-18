@@ -1,1 +1,1 @@
-# django_optimize
+# example-package
