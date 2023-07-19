@@ -6,5 +6,23 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/backend
+    environment:
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_NAME: django-postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - postgres-db
+
+  postgres-db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_DB: django-postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5454:5432"
