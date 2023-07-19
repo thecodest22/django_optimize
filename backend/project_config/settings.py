@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # -------- Libs --------
+    'rest_framework',
     # -------- Apps --------
     'clients.apps.ClientsConfig',
     'services.apps.ServicesConfig',
@@ -90,3 +91,86 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGS_DIR = BASE_DIR / 'logs/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'console_formatter': {
+            'format': '{style}{levelname}: {filename} | line {lineno} | {funcName}():{reset_styles}\t{message}',
+            'style': '{',
+        },
+
+        'file_formatter': {
+            'format': '{asctime} | {levelname} | {filename} | line {lineno} | {funcName}():\n\t{message}',
+            'style': '{',
+        }
+    },
+
+    'filters': {
+        'console_filter': {
+            '()': 'project_config.logging_config.ConsoleStyleFilter',
+        },
+    },
+
+    'handlers': {
+        'simple_console_handler': {
+            'class': 'logging.StreamHandler',
+        },
+
+        'dev_console_handler': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_formatter',
+            'filters': ['console_filter']
+        },
+
+        'dev_file_handler': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024*1024*20,  # 20 MB
+            'formatter': 'file_formatter',
+            'filename': LOGS_DIR / 'dev' / 'django_optimize_dev.log',
+            'backupCount': 5,
+        },
+
+        'prod_file_handler': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024*1024*20,  # 20 MB
+            'formatter': 'file_formatter',
+            'filename': LOGS_DIR / 'prod' / 'django_optimize_prod.log',
+            'backupCount': 5,
+        },
+
+        'prod_mail_handler': {
+            'class': 'django.utils.log.AdminEmailHandler',
+            'level': 'WARNING',
+            'formatter': 'file_formatter',
+        },
+    },
+
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['simple_console_handler'],
+            'level': 'DEBUG',
+        },
+        
+        'dev_main_logger': {
+            'level': 'DEBUG',
+            'handlers': ['dev_console_handler', 'dev_file_handler'],
+        },
+
+        'dev_console_logger': {
+            'level': 'DEBUG',
+            'handlers': ['dev_console_handler'],
+        },
+
+        'prod_logger': {
+            'level': 'INFO',
+            'handlers': ['prod_file_handler', 'prod_mail_handler']
+        },
+    }
+}
+
