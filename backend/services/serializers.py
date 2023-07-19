@@ -19,7 +19,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         model = Subscription
         fields = ('id', 'client_name', 'email', 'plan', 'total_price')
 
-    def get_total_price(self, obj):
-        obj: Subscription
+    # def get_total_price(self, obj):
+    #     obj: Subscription
+    #     return obj.service.price - obj.service.price * obj.plan.discount_percent / 100
 
-        return obj.service.price - obj.service.price * obj.plan.discount_percent / 100
+    def get_total_price(self, obj):
+        return obj.total_price
