@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # -------- Libs --------
     'rest_framework',
+    'flower',
     # -------- Apps --------
     'clients.apps.ClientsConfig',
     'services.apps.ServicesConfig',
